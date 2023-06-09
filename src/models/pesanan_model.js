@@ -16,7 +16,12 @@ const pesananSchema = new mongoose.Schema(
       type: String,
     },
     jenis_pesanan: {
-      type: String,
+      jenisPesanan: {
+        type: String,
+      },
+      status: {
+        type: String,
+      }
     },
     kode_pesanan: {
       type: String,
