@@ -16,7 +16,7 @@ const login = async ({ no_telpon, password }) => {
   console.log(user);
   if (user === null) {
     response = { ...requestResponse.unauthorized };
-    response.message = "nomor telpon tidak ditemukan."
+    response.message = "nomor telpon tidak ditemukan.";
     return response;
   }
 
@@ -24,20 +24,20 @@ const login = async ({ no_telpon, password }) => {
   console.log(comparePassword);
   if (!comparePassword) {
     response = { ...requestResponse.unauthorized };
-    response.message = "Password anda salah."
+    response.message = "Password anda salah.";
     return response;
   }
   if (user.role == 2) {
     if (user.verifikasi !== 1) {
       response = { ...requestResponse.unauthorized };
-      response.message = "User anda belum terferivikasi."
+      response.message = "User anda belum terferivikasi.";
       return response;
     }
   }
   const token = jwt.sign(
     {
       guid: user.guid,
-      ...(user.email && { email: user.email }),
+      ...(user.no_telpon && { no_telpon: user.no_telpon }),
       ...(user.password && { password: user.password }),
       ...(user.role && { role: user.role }),
     },

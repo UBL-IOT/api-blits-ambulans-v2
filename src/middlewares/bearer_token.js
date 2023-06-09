@@ -20,10 +20,10 @@ module.exports = () => {
           try {
             token = await jwt.verify(parts[1], publicKey);
             req.guid = token.guid;
-            req.email = token.email;
             // req.guid_profile = token.guid_profile ? token.guid_profile : "";
-            req.username = token.username;
+            req.no_telpon = token.no_telpon;
             req.password = token.password;
+            req.role = token.role;
             // req.institusi_code = token.institusi_code;
             // req.institution = token.institution ? token.institution : "";
           } catch (error) {

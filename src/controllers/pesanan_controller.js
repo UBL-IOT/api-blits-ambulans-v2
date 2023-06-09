@@ -24,33 +24,27 @@ const { rmqUrl } = require("../config");
 const inputPesanan = async (req, res) => {
   try {
     const con = req.app.get("rmqconfig");
-    
     req.body.guid = v4();
     console.log(req.body);
     const data = await pesanan_service.inputPesanan(req.body);
-    // await rmq.createConnection().then(async (con) => {
-      // console.log("dsadsa")
-      // let con = app
-      await con.createChannel(async function (error1, channel) {
-        if (error1) {
-          console.log(error1) ;
+    await con.createChannel(async function (error1, channel) {
+      if (error1) {
+        console.log(error1);
+      }
+
+      var exchange = "amq.topic";
+      var queue = "order_notif";
+      var msg = Buffer.from(req.body.rmq, "utf-8");
+      var routkey = "orderan";
+      await channel.publish(exchange, routkey, msg, (err) => {
+        if (err) {
+          console.error("[AMQP] publish", err);
+          channel.connection.close();
+          return;
         }
-
-        var exchange = 'amq.topic';
-        var queue = 'order_notif';
-        var msg = Buffer.from(req.body.rmq, "utf-8");
-        var routkey = 'orderan'
-        await channel.publish(exchange, routkey, msg,
-          (err) => {
-            if (err) {
-              console.error("[AMQP] publish", err);
-              channel.connection.close();
-              return;
-            }
-            // channel.connection.close();
-          })
-
+        // channel.connection.close();
       });
+    });
 
     // })
 
@@ -59,7 +53,7 @@ const inputPesanan = async (req, res) => {
     logger.error(error);
     response = { ...requestResponse.server_error };
   }
-  console.log(response);
+  // console.log(response);
   res.json(response);
 };
 
@@ -169,8 +163,24 @@ const updatePesanan = async (req, res) => {
     let data;
     req.body.updated_at = new Date();
     const { status_pesanan, status_driver, guid_driver } = req.body;
-    console.log(req.body.guid_paramedis);
-    if (req.body.guid_paramedis === undefined) {
+    console.log("cekpesanan");
+    console.log(req.body);
+    if (req.body.status_pesanan === 3) {
+      updateDriver = await pesanan_service.updatePesanan(
+        { guid: req.params.guidpesanan },
+        {
+          status_pesanan: status_pesanan,
+          status_driver: status_driver,
+          guid_driver: guid_driver,
+        }
+      );
+
+      updateParamedis = await pesanan_service.pilihParamedis(
+        { guid: req.params.guidpesanan },
+        { paramedis: req.body.guid_paramedis, status: req.body.status }
+      );
+    }
+    if (req.body.status === undefined) {
       data = await pesanan_service.updatePesanan(
         { guid: req.params.guidpesanan },
         {
@@ -180,6 +190,7 @@ const updatePesanan = async (req, res) => {
         }
       );
     } else {
+      console.log("Paramedis");
       data = await pesanan_service.pilihParamedis(
         { guid: req.params.guidpesanan },
         { paramedis: req.body.guid_paramedis, status: req.body.status }

@@ -217,7 +217,7 @@ const updatePesanan = async (condition, body) => {
 const pilihParamedis = async (condition, body) => {
   console.log(body);
   await paramedis_models.updateOne(
-    { guid: body.guid_paramedis },
+    { guid: body.paramedis },
     { status: body.status }
   );
   await pesanan_models.updateOne(condition, { ...body });
