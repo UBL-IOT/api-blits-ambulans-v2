@@ -17,6 +17,7 @@ morgan.token("date", (req, res, tz) => {
   return `[${format(new Date(), "dd-MM-yyyy HH:mm:ss")}]`;
 });
 // console.log("a");
+rmq.createConnection().then((rmq) => app.set("rmqconfig", rmq)).catch((_) => logger.info("Failed to connect RMQ"))
 mongo.createConnection().then((_) => logger.info("MongoDB connected!"));
 // neo4jConf.createConnection().then((_) => logger.info("Neo4j DB connected!"));
 

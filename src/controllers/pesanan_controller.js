@@ -4,7 +4,9 @@ const { requestResponse } = require("../utils");
 const logger = require("../utils/logger");
 const { v4 } = require("uuid");
 let response;
-
+const rmq = require("../db_config/rmq");
+// const rmq = require("amqplib/callback_api");
+const { rmqUrl } = require("../config");
 // const inputPesanan = async (req, res) => {
 //   try {
 //     req.body.guid = v4();

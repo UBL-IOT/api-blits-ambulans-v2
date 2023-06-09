@@ -2,6 +2,7 @@ require("dotenv").config();
 const fs = require(`fs`);
 
 const mongoUrl = process.env.NODE_ENV === "production" ? process.env.MONGO_PROD : process.env.MONGO_DEV;
+const rmqUrl = process.env.NODE_ENV === "production" ? process.env.RMQ_URI : process.env.RMQ_URI;
 
 const mongoOptions = {
   keepAlive: true,
@@ -11,7 +12,7 @@ const mongoOptions = {
   autoIndex: false,
 };
 
-const allowedOrigins = [/.*.pptik.id/];
+const allowedOrigins = [/.*.psti-ubl.id/];
 
 if (process.env.NODE_ENV === "development") {
   allowedOrigins.push(/.*./);
@@ -45,5 +46,6 @@ module.exports = {
   mongoUrl,
   mongoOptions,
   cors,
+  rmqUrl
   // credentials
 };
