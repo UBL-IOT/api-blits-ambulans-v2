@@ -12,7 +12,7 @@ const parseAppType = require("./middlewares/app_type");
 const { cors } = require("./config");
 const logger = require("./utils/logger");
 const { requestResponse } = require("./utils/index");
-
+const rmq = require("./db_config/rmq");
 morgan.token("date", (req, res, tz) => {
   return `[${format(new Date(), "dd-MM-yyyy HH:mm:ss")}]`;
 });
