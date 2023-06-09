@@ -5,11 +5,53 @@ const logger = require("../utils/logger");
 const { v4 } = require("uuid");
 let response;
 
+// const inputPesanan = async (req, res) => {
+//   try {
+//     req.body.guid = v4();
+//     console.log(req.body);
+//     const data = await pesanan_service.inputPesanan(req.body);
+//     response = { ...data };
+//   } catch (error) {
+//     logger.error(error);
+//     response = { ...requestResponse.server_error };
+//   }
+//   console.log(response);
+//   res.json(response);
+// };
+
 const inputPesanan = async (req, res) => {
   try {
+    const con = req.app.get("rmqconfig");
+    
     req.body.guid = v4();
     console.log(req.body);
     const data = await pesanan_service.inputPesanan(req.body);
+    // await rmq.createConnection().then(async (con) => {
+      // console.log("dsadsa")
+      // let con = app
+      await con.createChannel(async function (error1, channel) {
+        if (error1) {
+          console.log(error1) ;
+        }
+
+        var exchange = 'amq.topic';
+        var queue = 'order_notif';
+        var msg = Buffer.from(req.body.rmq, "utf-8");
+        var routkey = 'orderan'
+        await channel.publish(exchange, routkey, msg,
+          (err) => {
+            if (err) {
+              console.error("[AMQP] publish", err);
+              channel.connection.close();
+              return;
+            }
+            // channel.connection.close();
+          })
+
+      });
+
+    // })
+
     response = { ...data };
   } catch (error) {
     logger.error(error);
